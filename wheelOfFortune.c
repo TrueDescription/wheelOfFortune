@@ -4,13 +4,14 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <math.h>
 
 
 // Constants
 #define PUZZLE "HELLO WORLD"
 #define PUZZLE_LENGTH strlen(PUZZLE)
 #define MAX_GUESSES 6
-#define WHEEL_SIZE 5
+#define WHEEL_SIZE 12
 #define ANIMATION_DELAY 150000 // Microseconds
 
 // Function prototypes
@@ -19,7 +20,6 @@ char spinWheel();
 void handleGuess(char *letter, const char* puzzle, char* guessedLetters, int* score);
 
 int main() {
-    srand(time(0));
 
     int score = 0;
     char guessedLetters[PUZZLE_LENGTH];
@@ -29,7 +29,15 @@ int main() {
     }
     guessedLetters[PUZZLE_LENGTH-1] = '\0';
 
-    int wheel[WHEEL_SIZE] = {100, 200, 300, 400, 500};
+    int wheel[WHEEL_SIZE];
+    srand(time(0));
+    for (int i=0; i<WHEEL_SIZE; i++) {
+        int num = rand() % 1901 + 100;
+        int div = pow(10, log10(num));
+        wheel[i] = ceil(num / div) * div;
+        //printf("%d", wheel[i]);
+        //sleep(1);
+    }
 
     printf("Welcome to Wheel of Fortune!\n");
     printf("Guess the puzzle: ");
@@ -50,9 +58,9 @@ int main() {
 
         // Wheel stops spinning, ask for letter guess
         displayBoard(guessedLetters, score, wheelSegment, wheel);
-
+        printf("Guess a Word [Y/n]?: ");
         char guess[2];
-        printf("Guess a letter: ");
+        printf("Guess a Letter: ");
         //scanf("%c", &guess);
         guess[0] = getc(stdin);
         guess[1] = '\0';
@@ -92,7 +100,6 @@ void displayBoard(const char* guessedLetters, int score, char wheelSegment, int 
 }
 
 char spinWheel() {
-    char wheel[WHEEL_SIZE] = {100, 200, 300, 400, 500};
     int index = rand() % WHEEL_SIZE;
     return index;
 }
